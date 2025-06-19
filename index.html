@@ -1,27 +1,50 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Diamond Chat</title>
+<title>Diamond Chat - Secure AI Chat</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>Diamond Chat</header>
-<main>
-  <div class="auth-container">
-    <input type="email" id="email" placeholder="Email" autocomplete="username" />
-    <input type="password" id="password" placeholder="Şifre" autocomplete="current-password" />
-    <button id="signup">Kayıt Ol</button>
-    <button id="login">Giriş Yap</button>
-    <button id="logout">Çıkış</button>
-  </div>
-  <div id="chat-box"></div>
-  <div class="input-container">
-    <textarea id="message-input" placeholder="Mesajınızı yazın..." rows="2"></textarea>
-    <button id="send-button">Gönder</button>
-  </div>
-</main>
-<script type="module" src="./script.js"></script>
+<div id="app">
+  <header>
+    <h1>Diamond Chat</h1>
+    <div id="user-info"></div>
+    <button id="logout-btn" style="display:none;">Logout</button>
+  </header>
+  <main>
+    <div id="messages"></div>
+    <form id="message-form">
+      <input id="message-input" placeholder="Type a message..." autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </main>
+
+  <section id="auth-section">
+    <h2>Login / Register</h2>
+    <form id="email-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button id="login-btn" type="button">Login</button>
+      <button id="register-btn" type="button">Register</button>
+    </form>
+    <button id="google-signin-btn">Sign in with Google</button>
+
+    <h3>Phone Sign In</h3>
+    <form id="phone-form">
+      <input type="tel" id="phone-number" placeholder="+90 5xx xxx xx xx" required />
+      <div id="recaptcha-container"></div>
+      <button id="phone-send-code-btn" type="button">Send Code</button>
+    </form>
+
+    <form id="phone-code-form" style="display:none;">
+      <input type="text" id="phone-code" placeholder="Enter verification code" required />
+      <button id="phone-verify-code-btn" type="button">Verify Code</button>
+    </form>
+  </section>
+</div>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
