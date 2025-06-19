@@ -35,17 +35,26 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-sendButton.addEventListener("click", async () => {
+function sendMessage() {
   const text = messageInput.value.trim();
   if (!text) return;
-
-  await addDoc(collection(db, "messages"), {
+  addDoc(collection(db, "messages"), {
     user: currentUserEmail,
     text,
     createdAt: serverTimestamp()
   });
-
   messageInput.value = "";
+}
+
+sendButton.addEventListener("click", () => {
+  sendMessage();
+});
+
+messageInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
 const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
