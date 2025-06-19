@@ -1,15 +1,36 @@
-// Firebase config
+// Firebase App (the core Firebase SDK)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// Firebase Auth SDK
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// Firebase config - sizin paylaştığınız kodla
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MSG_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAvH-wCEt68B6LnSEo7zGE1AvztrNdE2lY",
+  authDomain: "diamond-chat.firebaseapp.com",
+  projectId: "diamond-chat",
+  storageBucket: "diamond-chat.appspot.com",
+  messagingSenderId: "1015801038466",
+  appId: "1:1015801038466:web:bfa00912c77b987bc86bc1"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Firebase'i başlat
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-const auth = firebase.auth();
-const db = firebase.firestore();
-const provider = new firebase.auth.GoogleAuthProvider();
+// 🔐 Giriş fonksiyonları
+export {
+  auth,
+  provider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+};
