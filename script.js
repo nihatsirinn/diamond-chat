@@ -14,10 +14,9 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPhoneNumber,
-  RecaptchaVerifier
+  RecaptchaVerifier,
+  provider
 } from "./firebase.js";
-
-const provider = new GoogleAuthProvider();
 
 const userInfoDiv = document.getElementById("user-info");
 const logoutBtn = document.getElementById("logout-btn");
@@ -26,7 +25,6 @@ const messageForm = document.getElementById("message-form");
 const messageInput = document.getElementById("message-input");
 
 const authSection = document.getElementById("auth-section");
-const emailForm = document.getElementById("email-form");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("login-btn");
@@ -67,19 +65,29 @@ function clearMessages() {
   messagesDiv.innerHTML = "";
 }
 
+function showChat() {
+  authSection.style.display = "none";
+  document.getElementById("chat-section").style.display = "block";
+}
+
+function showAuth() {
+  authSection.style.display = "block";
+  document.getElementById("chat-section").style.display = "none";
+}
+
 function setupAuthListener() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUser = user;
       userInfoDiv.textContent = "Logged in as: " + (user.email || user.phoneNumber);
       logoutBtn.style.display = "inline-block";
-      authSection.style.display = "none";
+      showChat();
       loadMessages();
     } else {
       currentUser = null;
       userInfoDiv.textContent = "";
       logoutBtn.style.display = "none";
-      authSection.style.display = "block";
+      showAuth();
       clearMessages();
     }
   });
