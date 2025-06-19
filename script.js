@@ -1,195 +1,71 @@
-import {
-  auth,
-  db,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot,
-  serverTimestamp,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
-  provider
-} from "./firebase.js";
+document.addEventListener("DOMContentLoaded", () => {
+  const signupBtn = document.getElementById("signup");
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const googleBtn = document.getElementById("google");
+  const sendBtn = document.getElementById("send");
 
-const userInfoDiv = document.getElementById("user-info");
-const logoutBtn = document.getElementById("logout-btn");
-const messagesDiv = document.getElementById("messages");
-const messageForm = document.getElementById("message-form");
-const messageInput = document.getElementById("message-input");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const messageInput = document.getElementById("message-input");
+  const messagesDiv = document.getElementById("messages");
+  const chatSection = document.getElementById("chat-section");
 
-const authSection = document.getElementById("auth-section");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const loginBtn = document.getElementById("login-btn");
-const registerBtn = document.getElementById("register-btn");
+  signupBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(user => console.log("Signed up:", user))
+      .catch(error => alert(error.message));
+  };
 
-const googleSignInBtn = document.getElementById("google-signin-btn");
+  loginBtn.onclick = () => {
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(user => console.log("Logged in:", user))
+      .catch(error => alert(error.message));
+  };
 
-const phoneForm = document.getElementById("phone-form");
-const phoneNumberInput = document.getElementById("phone-number");
-const phoneSendCodeBtn = document.getElementById("phone-send-code-btn");
-const phoneCodeForm = document.getElementById("phone-code-form");
-const phoneCodeInput = document.getElementById("phone-code");
-const phoneVerifyCodeBtn = document.getElementById("phone-verify-code-btn");
+  logoutBtn.onclick = () => {
+    firebase.auth().signOut();
+  };
 
-let currentUser = null;
-let confirmationResult = null;
+  googleBtn.onclick = () => {
+    firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  };
 
-function renderMessage(doc) {
-  const data = doc.data();
-  const msgDiv = document.createElement("div");
-  msgDiv.classList.add("message");
+  sendBtn.onclick = () => {
+    const message = messageInput.value;
+    const user = firebase.auth().currentUser;
+    if (user && message.trim() !== "") {
+      firebase.firestore().collection("messages").add({
+        text: message,
+        uid: user.uid,
+        email: user.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      messageInput.value = "";
+    }
+  };
 
-  const userSpan = document.createElement("span");
-  userSpan.classList.add("username");
-  userSpan.textContent = data.userEmail || "Unknown";
-
-  const textSpan = document.createElement("span");
-  textSpan.textContent = ": " + data.text;
-
-  msgDiv.appendChild(userSpan);
-  msgDiv.appendChild(textSpan);
-
-  messagesDiv.appendChild(msgDiv);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function clearMessages() {
-  messagesDiv.innerHTML = "";
-}
-
-function showChat() {
-  authSection.style.display = "none";
-  document.getElementById("chat-section").style.display = "block";
-}
-
-function showAuth() {
-  authSection.style.display = "block";
-  document.getElementById("chat-section").style.display = "none";
-}
-
-function setupAuthListener() {
-  onAuthStateChanged(auth, (user) => {
+  firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      currentUser = user;
-      userInfoDiv.textContent = "Logged in as: " + (user.email || user.phoneNumber);
+      chatSection.style.display = "block";
       logoutBtn.style.display = "inline-block";
-      showChat();
-      loadMessages();
+      firebase.firestore().collection("messages").orderBy("timestamp")
+        .onSnapshot(snapshot => {
+          messagesDiv.innerHTML = "";
+          snapshot.forEach(doc => {
+            const msg = doc.data();
+            const div = document.createElement("div");
+            div.textContent = `${msg.email}: ${msg.text}`;
+            messagesDiv.appendChild(div);
+          });
+        });
     } else {
-      currentUser = null;
-      userInfoDiv.textContent = "";
+      chatSection.style.display = "none";
       logoutBtn.style.display = "none";
-      showAuth();
-      clearMessages();
     }
   });
-}
-
-async function loadMessages() {
-  clearMessages();
-  const q = query(collection(db, "messages"), orderBy("createdAt"));
-  onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        renderMessage(change.doc);
-      }
-    });
-  });
-}
-
-messageForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = messageInput.value.trim();
-  if (!text || !currentUser) return;
-  await addDoc(collection(db, "messages"), {
-    text,
-    userId: currentUser.uid,
-    userEmail: currentUser.email || currentUser.phoneNumber,
-    createdAt: serverTimestamp()
-  });
-  messageInput.value = "";
 });
-
-logoutBtn.addEventListener("click", () => {
-  signOut(auth);
-});
-
-loginBtn.addEventListener("click", async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  if (!email || !password) {
-    alert("Email and password required");
-    return;
-  }
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    alert("Login error: " + err.message);
-  }
-});
-
-registerBtn.addEventListener("click", async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  if (!email || !password) {
-    alert("Email and password required");
-    return;
-  }
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    alert("Register error: " + err.message);
-  }
-});
-
-googleSignInBtn.addEventListener("click", async () => {
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (err) {
-    alert("Google sign-in error: " + err.message);
-  }
-});
-
-window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-  'size': 'invisible',
-  'callback': (response) => {}
-}, auth);
-
-phoneSendCodeBtn.addEventListener("click", async () => {
-  const phoneNumber = phoneNumberInput.value.trim();
-  if (!phoneNumber) {
-    alert("Phone number required");
-    return;
-  }
-  try {
-    confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
-    alert("Code sent!");
-    phoneCodeForm.style.display = "block";
-    phoneForm.style.display = "none";
-  } catch (err) {
-    alert("Send code error: " + err.message);
-  }
-});
-
-phoneVerifyCodeBtn.addEventListener("click", async () => {
-  const code = phoneCodeInput.value.trim();
-  if (!code) {
-    alert("Verification code required");
-    return;
-  }
-  try {
-    await confirmationResult.confirm(code);
-  } catch (err) {
-    alert("Code verification error: " + err.message);
-  }
-});
-
-setupAuthListener();
