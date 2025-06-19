@@ -1,145 +1,27 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diamond Chat</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #6dd5ed, #2193b0);
-      color: #fff;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background-color: rgba(0,0,0,0.3);
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
-      max-width: 600px;
-      margin: auto;
-      width: 100%;
-    }
-    #chat-box {
-      flex: 1;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 1rem;
-      overflow-y: auto;
-      margin-bottom: 1rem;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-      font-size: 0.9rem;
-      line-height: 1.3;
-    }
-    #chat-box div {
-      margin-bottom: 0.5rem;
-      word-wrap: break-word;
-    }
-    #message-input {
-      width: calc(100% - 100px);
-      padding: 0.5rem;
-      border-radius: 5px 0 0 5px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-    }
-    #send-button {
-      width: 90px;
-      background-color: #0288d1;
-      border: none;
-      border-radius: 0 5px 5px 0;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    #send-button:hover {
-      background-color: #026fa4;
-    }
-    .auth-container {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .auth-container input {
-      padding: 0.5rem;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      width: 150px;
-      max-width: 100%;
-    }
-    .auth-container button {
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      border: none;
-      background-color: #0288d1;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .auth-container button:hover {
-      background-color: #026fa4;
-    }
-    #logout {
-      background-color: #d32f2f;
-    }
-    #logout:hover {
-      background-color: #9a2424;
-    }
-    @media (max-width: 480px) {
-      #message-input {
-        width: 100%;
-        border-radius: 5px;
-        margin-bottom: 0.5rem;
-      }
-      #send-button {
-        width: 100%;
-        border-radius: 5px;
-      }
-      .auth-container {
-        flex-direction: column;
-        align-items: center;
-      }
-      .auth-container input,
-      .auth-container button {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diamond Chat</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>Diamond Chat</header>
-  <main>
-    <div class="auth-container">
-      <input type="email" id="email" placeholder="Email" autocomplete="username" />
-      <input type="password" id="password" placeholder="Şifre" autocomplete="current-password" />
-      <button id="signup">Kayıt Ol</button>
-      <button id="login">Giriş Yap</button>
-      <button id="logout">Çıkış</button>
-    </div>
-    <div id="chat-box"></div>
-    <div style="display:flex;">
-      <input type="text" id="message-input" placeholder="Mesajınızı yazın..." autocomplete="off" />
-      <button id="send-button">Gönder</button>
-    </div>
-  </main>
-  <script type="module" src="./script.js"></script>
+<header>Diamond Chat</header>
+<main>
+  <div class="auth-container">
+    <input type="email" id="email" placeholder="Email" autocomplete="username" />
+    <input type="password" id="password" placeholder="Şifre" autocomplete="current-password" />
+    <button id="signup">Kayıt Ol</button>
+    <button id="login">Giriş Yap</button>
+    <button id="logout">Çıkış</button>
+  </div>
+  <div id="chat-box"></div>
+  <div class="input-container">
+    <textarea id="message-input" placeholder="Mesajınızı yazın..." rows="2"></textarea>
+    <button id="send-button">Gönder</button>
+  </div>
+</main>
+<script type="module" src="./script.js"></script>
 </body>
 </html>
