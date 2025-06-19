@@ -7,10 +7,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
-  ref,
-  push,
-  onChildAdded
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const chatBox = document.getElementById("chat-box");
 const messageInput = document.getElementById("message-input");
@@ -32,41 +35,49 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-sendButton.addEventListener("click", () => {
-  const msg = messageInput.value.trim();
-  if (msg === "") return;
+sendButton.addEventListener("click", async () => {
+  const text = messageInput.value.trim();
+  if (!text) return;
 
-  push(ref(db, "messages"), {
+  await addDoc(collection(db, "messages"), {
     user: currentUserEmail,
-    text: msg,
-    timestamp: Date.now()
+    text,
+    createdAt: serverTimestamp()
   });
 
   messageInput.value = "";
 });
 
-onChildAdded(ref(db, "messages"), (data) => {
-  const msg = data.val();
-  const div = document.createElement("div");
-  div.textContent = `${msg.user}: ${msg.text}`;
-  chatBox.appendChild(div);
+const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+
+onSnapshot(q, (querySnapshot) => {
+  chatBox.innerHTML = "";
+  querySnapshot.forEach((doc) => {
+    const msg = doc.data();
+    const div = document.createElement("div");
+    const time = msg.createdAt?.toDate().toLocaleTimeString() || "";
+    div.textContent = `[${time}] ${msg.user}: ${msg.text}`;
+    chatBox.appendChild(div);
+  });
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 
 signupButton.addEventListener("click", () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  if (!email || !password) return alert("Email ve şifre gerekli");
   createUserWithEmailAndPassword(auth, email, password)
     .then(() => alert("Kayıt başarılı"))
-    .catch((error) => alert(error.message));
+    .catch(e => alert(e.message));
 });
 
 loginButton.addEventListener("click", () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  if (!email || !password) return alert("Email ve şifre gerekli");
   signInWithEmailAndPassword(auth, email, password)
     .then(() => alert("Giriş başarılı"))
-    .catch((error) => alert(error.message));
+    .catch(e => alert(e.message));
 });
 
 logoutButton.addEventListener("click", () => {
