@@ -2,51 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Diamond Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="container">
+    <h1>💎 Diamond Chat</h1>
 
-  <header>
-    <h1>Diamond Chat</h1>
-    <div id="user-info"></div>
-    <button id="logout-btn" style="display:none;">Logout</button>
-  </header>
-
-  <section id="auth-section">
-    <div id="email-form">
+    <div id="user-section">
       <input type="email" id="email" placeholder="Email" />
       <input type="password" id="password" placeholder="Password" />
-      <button id="login-btn">Login</button>
-      <button id="register-btn">Register</button>
+      <button id="signup">Sign Up</button>
+      <button id="login">Log In</button>
+      <button id="google">Google Login</button>
+      <button id="logout" style="display: none;">Log Out</button>
     </div>
 
-    <div id="google-login">
-      <button id="google-signin-btn">Sign in with Google</button>
+    <div id="chat-section" style="display: none;">
+      <div id="messages"></div>
+      <input type="text" id="message-input" placeholder="Type your message..." />
+      <button id="send">Send</button>
     </div>
+  </div>
 
-    <div id="phone-form">
-      <input type="tel" id="phone-number" placeholder="+90 555 555 55 55" />
-      <button id="phone-send-code-btn">Send Code</button>
-    </div>
-
-    <div id="phone-code-form" style="display:none;">
-      <input type="text" id="phone-code" placeholder="Enter verification code" />
-      <button id="phone-verify-code-btn">Verify Code</button>
-    </div>
-
-    <div id="recaptcha-container"></div>
-  </section>
-
-  <section id="chat-section" style="display:none;">
-    <div id="messages"></div>
-    <form id="message-form">
-      <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
-  </section>
-  
-  <script type="module" src="script.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
